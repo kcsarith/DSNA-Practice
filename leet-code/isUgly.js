@@ -18,3 +18,4 @@ const isUgly = function(num) {
     return false;   
     }
 };
+ 
