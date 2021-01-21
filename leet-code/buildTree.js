@@ -1,4 +1,3 @@
-
 var buildTree = function(preorder, inorder) {
     if(preorder.length ===0 && inorder.length ===0) return null;
     let rootNode = new TreeNode(preorder[0]);
@@ -13,4 +12,5 @@ var buildTree = function(preorder, inorder) {
     rootNode.left = buildTree(leftPreorder, leftInorder);
     rootNode.right = buildTree(rightPreorder, rightInorder);
     
+    return rootNode;
 };
