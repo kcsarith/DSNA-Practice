@@ -20,9 +20,7 @@ var maxArea = function(height) {
     let rightIndex = height.length-1;
     
     while(leftIndex<rightIndex){
-        let smallerHeight=height[leftIndex];
-        if(height[leftIndex]>height[rightIndex]) smallerHeight=height[rightIndex];
-        const currentWater = smallerHeight*(rightIndex-leftIndex);
+        const currentWater = calculateArea(height, leftIndex, rightIndex);
         if(currentWater>mostWater) mostWater = currentWater;
         if(height[leftIndex]<height[rightIndex]){
             leftIndex++
@@ -32,3 +30,9 @@ var maxArea = function(height) {
     }
     return mostWater;
 };
+
+function calculateArea(array, leftIndex, rightIndex){
+    let smallerHeight=array[leftIndex];
+    if(array[leftIndex]>array[rightIndex]) smallerHeight=array[rightIndex];
+    return smallerHeight*(rightIndex-leftIndex);
+}
