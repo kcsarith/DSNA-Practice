@@ -1,47 +1,138 @@
-function processSlots(input) {
+//==================//
+// 		Part 1	 	//
+//==================//
 
-	console.log(`Output: ${[...input]}`);
+var userBalance = 0;
+var countUpBalance = 0;
+var finalBalance = 0;
+var countDifference = 0;
+
+// Gets called whenever the money finished tweening to the bottom.
+function addFromCatch(value) {
+	finalBalance += value;
+	countDifference = finalBalance - countUpBalance;
+}
+
+// Gets called every frame.
+// Time elapsed since the last update is passed into the function(milliseconds)
+function onUpdate({ delta }) {
+	const seconds = 2;
+	const oneFramePassing = delta * 60;
+	if (countUpBalance < finalBalance) {
+		countUpBalance += (countDifference / oneFramePassing) * (delta / seconds);
+	}
+	else if (countUpBalance > finalBalance) {
+		countUpBalance = finalBalance;
+	}
+	if (countUpBalance === finalBalance && userBalance != finalBalance) {
+		userBalance = finalBalance;
+	}
+	const roundedValue = Math.round(countUpBalance);
+	updateBalance(roundedValue.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, ","));
+}
+
+// You have access to a function updateBalance which
+// takes in a string and sets the ui to that value
+// updateBalance("1");
+
+
+
+
+//==================//
+// 		Part 2	 	//
+//==================//
+
+function processSlots(input) {
+	let rowResult = _checkRows(input);
+	let diagonalResult = _checkDiagonals(input);
+	let totalPoints = rowResult.totalPoints + diagonalResult.totalPoints;
+	let winningRows = rowResult.winningRows + diagonalResult.winningRows;
+	let plural = 's';
+	if (winningRows === 1) plural = '';
+
+	console.log(`Output: ${winningRows} winning line${plural}, scoring a total ${totalPoints} points.`);
+	return totalPoints;
 };
 
 function _checkRows(input) {
-	let totalPoints = 0;
+	let result = {
+		totalPoints: 0,
+		winningRows: 0
+	}
 	input.forEach(function (row) {
 		for (let xPos = 0; xPos < row.length;) {
 			let symbolCount = 1;
-			const currentChar = row[xPos];
+			const currentSymbol = row[xPos];
 			for (let nextIndex = xPos; nextIndex < row.length;) {
-				const nextChar = row[nextIndex + 1];
-				if (nextChar === undefined) {
-					xPos += symbolCount;
-					totalPoints += _calculateScore(currentChar, symbolCount);
-					break;
-				}
-				if (currentChar === nextChar) {
-					symbolCount++;
-					nextIndex++;
-				} else {
-					totalPoints += _calculateScore(currentChar, symbolCount);
-					xPos += symbolCount;
+				const nextSymbol = row[nextIndex + 1];
+				if (nextSymbol === undefined || currentSymbol !== nextSymbol) {
+					xPos += row.length + 1; //skip outer loop to check next row.
+					const score = _calculateScore(currentSymbol, symbolCount);
+					result.totalPoints += score;
+					if (score > 0) result.winningRows++;
 					symbolCount = 0;
 					break;
+				}
+				else if (currentSymbol === nextSymbol) {
+					symbolCount++;
+					nextIndex++;
 				}
 			}
 		}
 	});
-	return totalPoints;
+	return result;
 }
-function _checkColumns(input) {
-	const columnSymbols = {};
-	let totalPoints = 0;
-	for (let yPos = 0; yPos < input.length;){
-		const column = input[yPos];
 
-	}
-	return columnSymbols;
-}
 
 function _checkDiagonals(input) {
+	let result = {
+		totalPoints: 0,
+		winningRows: 0
+	}
+	let symbolCount = 1;
 
+	let finishedTopLeftCheck = false;
+	let verticalIncrement = 1;
+
+	const topLeftSymbol = input[0][0];
+	const finalRowIndex = input.length - 1;
+	const bottomLeftSymbol = input[finalRowIndex][0];
+	let xPos = 1;
+	let yPos = 1;
+	let currentSymbol = topLeftSymbol;
+	if (topLeftSymbol < 1 || topLeftSymbol > 3) {
+		currentSymbol = bottomLeftSymbol;
+		finishedTopLeftCheck = true;
+		verticalIncrement = -1;
+		yPos = finalRowIndex - 1;
+	}
+	while (xPos <= input[0].length) {
+		const currentRow = input[yPos];
+		const nextSymbol = currentRow[xPos];
+		if (currentRow[xPos] === undefined || currentSymbol !== currentRow[xPos]) {
+			const score = _calculateScore(currentSymbol, symbolCount);
+			result.totalPoints += score;
+			xPos = 1;
+			symbolCount = 1;
+			yPos = finalRowIndex;
+
+			if (score > 0) result.winningRows++;
+			currentSymbol = bottomLeftSymbol;
+			if (finishedTopLeftCheck && xPos <= input[0].length) break;
+			finishedTopLeftCheck = true;
+		}
+		else if (currentSymbol === nextSymbol) {
+			xPos++;
+			symbolCount++;
+		}
+
+		//Reverse vertical increment when the next row is undefined
+		if (input[yPos + verticalIncrement] == undefined) {
+			verticalIncrement = -verticalIncrement;
+		}
+		yPos += verticalIncrement;
+	}
+	return result;
 }
 
 function _calculateScore(symbol, amount) {
@@ -97,23 +188,17 @@ var array2 = [
 	[1, 1, 1, 4, 1],
 	[3, 3, 3, 4, 2]
 ];
-var arrayKrisna = [
+
+var array3 = [
 	[1, 1, 1, 1, 1],
-	[1, 1, 1, 1, 1],
-	[1, 1, 1, 1, 1]
+	[0, 1, 0, 0, 0],
+	[0, 0, 1, 0, 0],
+	[3, 3, 3, 1, 0],
+	[3, 3, 3, 3, 1]
 ];
+
 //Output: '2 winning lines, scoring a total 30 points.'
 
-console.log(_checkColumns(array2));
-/*{
-	'number2~(0, 0)': 1,
-	'number4~(1, 0)': 1,
-	'number2~(2, 0)': 2,
-	'number3~(4, 0)': 1,
-	'number1~(0, 1)': 3,
-	'number4~(3, 1)': 1,
-	'number1~(4, 1)': 1,
-	'number3~(0, 2)': 3,
-	'number4~(3, 2)': 1,
-	'number2~(4, 2)': 1,
-}*/
+processSlots(array);
+processSlots(array2);
+processSlots(array3);
