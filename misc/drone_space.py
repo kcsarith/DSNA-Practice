@@ -8,7 +8,7 @@ AIRSPACE_SIZE = 128000 # Meters.
 CONFLICT_RADIUS = 500 # Meters.
 
 def count_conflicts(drones, conflict_radius):
-  raise Exception("Not Implemented")
+  # LOOP
 
 def gen_coord():
   return int(random.random() * AIRSPACE_SIZE)
