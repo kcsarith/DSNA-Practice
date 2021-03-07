@@ -52,16 +52,17 @@ const mapPromise = new Promise((resolve, reject) => {
     let logoPolys = logo.features.map((ele)=> ele.geometry.coordinates);
     
     var point = turf.point([-2.275543, 53.464547]); 
-// here first is lng and then lat 
-var polygon = turf.polygon([[
-  [-2.275543, 53.464547],
-  [-2.275543, 53.489271],
-  [-2.215118, 53.489271],
-  [-2.215118, 53.464547],
-  [-2.275543, 53.464547]
-]], { name: 'poly1'});
-
-console.log(TurfJoins.inside(point, polygon));
+    // here first is lng and then lat 
+    var polygon = turf.polygon([[
+    [-2.275543, 53.464547],
+    [-2.275543, 53.489271],
+    [-2.215118, 53.489271],
+    [-2.215118, 53.464547],
+    [-2.275543, 53.464547]
+    ]], { name: 'poly1'});
+    
+    console.log(turf.inside(point, polygon));
+    
     console.log(logoPolys[0]);
     console.log('LOGO*************');
     console.log(logo.features[0].geometry.coordinates);
@@ -100,5 +101,5 @@ console.log(TurfJoins.inside(point, polygon));
         "text-anchor": "top"
       }
     })
-    
-      })
+
+    })
