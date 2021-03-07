@@ -49,16 +49,13 @@ Promise.all([ddlogo, poi, mapPromise])
     .then((datas) => {
         const [logo, points, map] = datas;
 
-        // Create Empty Arrays to separate valid and invalid results.
-        const validPointFeatures = [];
-        const invalidPointFeatures = [];
         // Create seperate valid/invalid point objects to render different map layers.
         const validPoints = {
-            features: validPointFeatures,
+            features: [],
             name: 'Valid Points'
         };
         const invalidPoints = {
-            features: invalidPointFeatures,
+            features: [],
             name: 'Invalid Points'
         };
         // Deep copy of the points without existing keys, to be populated by valid or invalid points.
@@ -103,8 +100,9 @@ Promise.all([ddlogo, poi, mapPromise])
             else invalidPoints.features.push(pointsFeature);
         });
 
-        console.log(validPointFeatures.length);
-        console.log(invalidPointFeatures.length)
+        console.log(`Number of valid points: ${validPoints.features.length}`);
+        console.log(`Number of invalid points: ${invalidPoints.features.length}`);
+
         // mapbox has trouble with the output of the geojson conversion
         logo.features[0].geometry.coordinates.reverse();
 
@@ -122,7 +120,6 @@ Promise.all([ddlogo, poi, mapPromise])
             }
         });
 
-
         map.addLayer({
             "id": "validPoints",
             "type": "symbol",
@@ -131,12 +128,16 @@ Promise.all([ddlogo, poi, mapPromise])
                 "data": validPoints
             },
             "layout": {
-                "text-field": "*",
+                "text-field": "★",
                 "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
                 "text-offset": [0, 0],
-                "text-anchor": "top"
+                "text-anchor": "center",
+            },
+            "paint": {
+                "text-color": "#000000"
             }
         })
+
         map.addLayer({
             "id": "invalidPoints",
             "type": "symbol",
@@ -145,10 +146,13 @@ Promise.all([ddlogo, poi, mapPromise])
                 "data": invalidPoints
             },
             "layout": {
-                "text-field": "-",
+                "text-field": "＊",
                 "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
                 "text-offset": [0, 0],
-                "text-anchor": "top"
+                "text-anchor": "center"
+            },
+            "paint": {
+                "text-color": "#FF0000"
             }
         })
 
