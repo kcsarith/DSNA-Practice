@@ -79,7 +79,7 @@ Promise.all([ddlogo, poi, mapPromise])
                 // Grabs the polygon coordinates for turf checking
                 const polygon = logo.features[i].geometry.coordinates;
                 // Conditional added due to an issue using turf.inside for length of 2.
-                // If the polygon is inside, it sets its validity to true.
+                // If the point is inside, it sets its validity to true.
                 if (polygon.length === 1) {
                     const turfPolygon = turf.polygon(polygon);
                     isValid = turf.inside(pointsFeature, turfPolygon);
